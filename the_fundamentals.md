@@ -108,6 +108,12 @@ At the base level, most programming languages deal with much of the same kinds o
   * A piece of text. The name "string" refers to the fact that the data is a "string" of characters, like "a", "b", etc. 
     which in some programming languages are a type unto themselves.
   * _e.g. "Hello, World!", "Lorem ipsum dolor sit amet"_
+* Lists
+  * A list of other pieces of data. Some programming languages enforce that all elements contained in a list are of the
+    same type, but Python doesn't have that restriction, so go wild!
+  * You can grab an element of a list at a certain position by using square-brackets next to the variable that contains
+    the list -- position numbers start at 0 at the beginning of the list, and count upwards.
+  * _e.g. [1, 2, 3], ["a", "b", "c"]_
 
 There are many more data types out there, including some that allow you to organize and store collections of other
 pieces of data, but these are the core types that you'll be working with on a regular basis.
@@ -372,3 +378,221 @@ Now, each of those checks will need to resolve to true before that print stateme
 Similar operators that help us combine Boolean values exist, including `or` (takes two values, resolves to true if
 either value is true, resolves to false otherwise), and `not` (takes one value, resolves to true if the value is false,
 resolves to false if the value is true)
+
+### _Loops: Two Different Flavors_
+
+Sometimes we want to execute some piece of code multiple times; for example, we might want a bot to move a certain
+number of spaces forward, or maybe we want to print out some data we have stored in a table, row by row.
+
+But we don't want to copy and paste the same lines of code over and over again.
+
+That's cringe.
+
+Instead, we can use loops to allow us to execute a certain piece of code multiple times.
+
+Loops come in two flavors: `for` loops, and `while` loops.
+
+`for` loops are good for when you know exactly how many times you need to loop; say you want a bot to move forward a
+certain number of spaces, or you want to print out the contents of a list you have stored.
+
+With `for` loops, there is a definite end to the loop, and a definite number of times that it will loop -- once it 
+hits the last number you're counting, or the last element in the list you're looking at, the `for` loop stops and 
+your code continues onwards.
+
+`while` loops, by contrast, are good for when you're not really sure how many times you need to loop, and want to
+continue executing a bit of code while some condition is true -- say, you want to modify the guessing game above to keep
+running over and over until the user gets the number right. We can't know how long that's going to take, but we can tell
+when the criteria are met for the end of the game, so a `while` loop is appropriate.
+
+Now, the syntax and semantics of `for` loops in Python differs a decent bit from other programming languages, but this
+difference also makes it incredibly powerful.
+
+A `for` loop in Python is constructed as follows:
+
+```python
+  for <variable name> in <some list>:
+    <code to execute in loop>
+```
+
+_(Again, the indentation for the code inside the loop is important!)_
+
+For this loop, Python will take the first element in the list, and place it into a variable with the name that we
+provide in the `for` statement. It then runs the code inside the loop, and jumps back up to the `for` statement. Python
+will then place the second element in the list into that variable, and run the code inside the loop again. This
+continues until the variable has taken the value of each element of the list, and then the `for` loop will stop, and
+your code will continue onwards.
+
+(This is often called _iterating_ over the list -- in fact, in Python, any data structure that you can plop into the
+`<some list>` field of a `for` loop is called an _iterable_)
+
+Compared to the `for` loops you might be used to in Lua, which pre-define the start and end number, this might be a
+little uncomfortable at first. Let's start with a simple example.
+
+Python provides for us a function called `range()`, which returns a list containing the numbers between 0 and whichever
+number we supply to the function, with the number we supplied to the function not included.
+
+Consider the following piece of code:
+
+```python
+  range(10)
+```
+
+This function call will return the list `[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]`
+
+We can use this, for example, to print out the numbers between 0 and 10:
+
+```python
+  for i in range(10):
+    print(i)
+```
+
+Python will take the first element of the list, `0`, and place it into the variable `i`. Python then runs the code
+inside the loop, which prints out whatever is currently contained in `i`, which right now, is `0`.
+
+Python, hitting the bottom of the loop, then jumps back up to the top of the `for` loop, and places the next element of
+the list, `1`, into the variable `i`. Python then runs the print function again, and prints out whatever's currently
+contained in `i` again, which right now, is `1`.
+
+This continues until the print function has run for each element in the list. Python will then jump back up to the top
+of the list, realize that there's no more new elements in the list to assign to `i`, and exit the loop.
+
+We're not limited to just using `range()` in our `for` loops, however; we can use any list!
+
+Say we modified our guessing game above to have *even more* secret numbers, and we want to see if our user has guessed
+any one of them.
+
+Putting each secret number into its own variable would get messy and tiresome to write _very_ quickly, so putting all of
+the secret numbers in the list is a sensible thing to do.
+
+We can then use that list in a `for` loop to check each secret number in the list against the number the user has
+guessed -- if there's a match, then we can print out a success message!
+
+```python
+  # Creates a list containing all of the secret numbers the user can guess, and places it into the variable named "secret_numbers"
+  secret_numbers = [12, 35, 4, 18, 67]
+
+  guessed_number = int(input("Guess a number! "))
+
+  for number in secret_numbers:
+    if guessed_number == number:
+      print("You guessed one of the numbers!")
+```
+
+This loop looks over the list of secret numbers, and one-by-one, places each into the variable called `number`. It then
+uses this variable to compare against the user's guess, and print out a success message if the user is correct.
+
+However, there's one small optimization that we might want to make -- say the user guesses the number `35`, the second
+element in the list. When the loop gets to the number `35` in the list, it'll print out the success message like we
+might expect, but then _the loop keeps going_, checking the guess against all of the other secret numbers.
+
+We already know that the user has guessed correctly, and that there's nothing else to check, so this loop would just be
+checking numbers unnecessarily, wasting time.
+
+Luckily, Python (and most other programming languages that implement loops) provides us an easy way to "break" out of a
+loop early -- funnily enough, called `break`.
+
+So, we can simply modify our loop like this:
+
+```python
+  # Creates a list containing all of the secret numbers the user can guess, and places it into the variable named "secret_numbers"
+  secret_numbers = [12, 35, 4, 18, 67]
+
+  guessed_number = int(input("Guess a number! "))
+
+  for number in secret_numbers:
+    if guessed_number == number:
+      print("You guessed one of the numbers!")
+      break
+```
+
+Now, if we see that the user has guessed one of the numbers correctly, we print out the success message, and then
+execute the `break` statement, which immediately breaks us out of the loop, and jumps us to the next bit of code outside
+of the loop.
+
+`break` statements don't just work in `for` loops, they can also be used in `while` loops as well.
+
+Oh, speaking of which...
+
+`while` loops in Python are constructed as follows:
+
+```python
+  while <expr>:
+    <code to execute in loop>
+```
+
+Here, the `while` loop will continue executing the code inside of the loop while the expression we provide to it
+resolves/evaluates to true.
+
+The flow works much the same as a `for` loop: Python will start at the `while` loop line, and evaluate the expression
+provided to the loop. If the expression evaluates to true, the code inside of the loop will run once, and then Python
+will return to the `while` loop line, and evaluate the expression again, checking to see if it's still true. This will
+continue, over and over until the first time that Python checks the expression and it evaluates to false; Python will
+then exit the loop.
+
+This structure isn't great for counting up to a certain number or looking over a list, but it's great for executing a
+piece of code until something specific happens.
+
+We can use this to re-work our guessing game -- currently, the game will simply run once, only allowing the user to
+guess once, and then the program will exit, regardless of whether or not the user was correct. It'd be much better if
+the game kept running until the user guessed correctly.
+
+We can modify the game like so:
+
+```python
+  guessed_correctly = False
+  
+  # Creates a list containing all of the secret numbers the user can guess, and places it into the variable named "secret_numbers"
+  # I put this list outside of the loop because we don't need to keep creating this variable over and over -- just once is sufficient.
+  secret_numbers = [12, 35, 4, 18, 67]
+  
+  # This loop will continue running until guessed_correctly is True (the not will flip the value so that we can keep executing the loop while guessed_correctly is False)
+  while not guessed_correctly:
+    guessed_number = int(input("Guess a number! "))
+
+    for number in secret_numbers:
+      if guessed_number == number:
+        print("You guessed one of the numbers!")
+        guessed_correctly = True
+        break
+```
+
+Here, we've added an extra variable `guessed_correctly` to help keep track of the game state. `guessed_correctly` will
+be false to start with, since the user hasn't guessed yet, and therefore has not yet guessed correctly. We will then set
+`guessed_correctly` to true once the user guesses one of the numbers in the list.
+
+Since `while` loops will continue executing while the expression provided to it resolves to true, but we want this loop
+to continue executing while `guessed_correctly` is false (we want to keep playing the game while the user *hasn't*
+guessed correctly), we add the `not` Boolean operator before `guessed_correctly` in the `while` statement so that the
+loop keeps executing while the user hasn't guessed the number.
+
+And now, we've got a functional game on our hands!
+
+But wait, you might ask, isn't there a problem with that break statement?
+
+```python
+  guessed_correctly = False
+  
+  # Creates a list containing all of the secret numbers the user can guess, and places it into the variable named "secret_numbers"
+  # I put this list outside of the loop because we don't need to keep creating this variable over and over -- just once is sufficient.
+  secret_numbers = [12, 35, 4, 18, 67]
+  
+  # This loop will continue running until guessed_correctly is True (the not will flip the value so that we can keep executing the loop while guessed_correctly is False)
+  while not guessed_correctly:
+    guessed_number = int(input("Guess a number! "))
+
+    for number in secret_numbers:
+      if guessed_number == number:
+        print("You guessed one of the numbers!")
+        guessed_correctly = True
+    ---> break <---
+```
+
+I had said that `break` statements can work for both `for` and `while` loops. Wouldn't this line break us out of the
+`while` loop we just created, making our use of the `guessed_correctly` flag kind of pointless?
+
+Not necessarily.
+
+`break` statements can be used for both `for` and `while` loops, but they will only ever break us out of *one* loop at a
+time, that loop being the inner-most loop relative to the `break` statement. So, the `break` above will break out of the
+`for` loop, since that's the inner-most loop the `break` is contained within, but the code execution will stay within 
+the outer `while` loop. So, we're totally fine to use it here!
