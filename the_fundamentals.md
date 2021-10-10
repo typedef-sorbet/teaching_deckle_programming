@@ -596,3 +596,204 @@ Not necessarily.
 time, that loop being the inner-most loop relative to the `break` statement. So, the `break` above will break out of the
 `for` loop, since that's the inner-most loop the `break` is contained within, but the code execution will stay within 
 the outer `while` loop. So, we're totally fine to use it here!
+
+As an exercise, consider how we might modify this program further to keep running the game until the user has guessed
+*all* of the secret numbers.
+
+### _Functions_
+
+Sometimes, there'll be a really important chunk of code that you'll want to run in multiple different parts of your
+program; say there's a specific set of movements that your bot will need to make at multiple different times in order to
+complete a task.
+
+But copying and pasting that chunk of code everywhere you need it is inconvenient, and it starts to make your program
+less easy to read over and understand.
+
+That's also cringe.
+
+Functions allow us to more easily organize our code by placing a chunk of code inside of a function, giving it a name,
+and allowing us to run that code whenever we want just by referring back to the function by name.
+
+Functions in Python are constructed as follows:
+
+```python
+  def my_function():
+    <code to execute as part of this function>
+```
+
+Indentation is important here too!
+
+The text behind the parenthesis ("`my_function`") is the name of the function, and the `def` keyword indicates to Python
+that what we're about to write is a function.
+
+We can then run the code contained in this function by calling it:
+
+```python
+  my_function()
+```
+
+When Python gets to this line of code, it will recognize that `my_function` is a function, and the code execution will
+jump to the start of that function. The function will then run until the end of the function's code, and then code
+execution will jump back down to the place where we called the function, and continue executing.
+ 
+Functions can also return us back data that we want -- this is what `range()` is doing, returning a list of numbers.
+
+The parenthesis used when calling the function are important; they act as a sort of operator that operates on a 
+function -- the operation they perform is calling the function. In fact, function calls are themselves an 
+expression; the function name is the name of the thing we want to operate on, the parenthesis are the operator that 
+performs an action on that thing (calling the function), and the expression resolves to whatever the function 
+decides to return to us.
+
+This is why it's totally valid to use a function call in, for instance, an `if` statement or a `for` loop; they're just
+expressions that resolve to a value!
+
+So how do we return data from a function? The `return` keyword!
+
+```python
+  def my_function():
+    <code to execute as part of this function>
+    return <some_data>
+```
+
+Now, when we call this function, we can take whatever data it decides to return to us, and plop it into a variable, or
+use it in an `if`, or something else!
+
+```python
+  x = my_function()
+```
+
+Here, we call `my_function`; the code in that function executes, and the function returns some data to us -- the
+function call expression then _resolves_ to the value of whatever was returned by the function, and that resolved value
+is then stored in the variable `x`.
+
+Say we want to expand our number guessing game to have an element of randomness. We could write a function that returns
+a random number, and then use that function to create our list of secret numbers.
+
+```python
+  def random_number():
+    return <some long calculation that creates a random number> 
+
+  guessed_correctly = False
+  
+  # Place 5 random numbers into the list
+  secret_numbers = []
+  
+  for i in range(5):
+    secret_numbers.append(random_number())
+
+  # This loop will continue running until guessed_correctly is True (the not will flip the value so that we can keep executing the loop while guessed_correctly is False)
+  while not guessed_correctly:
+    guessed_number = int(input("Guess a number! "))
+
+    for number in secret_numbers:
+      if guessed_number == number:
+        print("You guessed one of the numbers!")
+        guessed_correctly = True
+        break
+```
+
+Here, we define a new function called `random_number` that returns a random number, and use it to populate our secret
+numbers list -- now, the game will be unique each time the player plays.
+
+So we can define functions and call them later. That's all fine and dandy, but what if we want to offload and 
+organize code that operates on data that changes?
+
+For example, say there's some really long calculation that we want to perform on the numbers between 0 and 10 -- maybe
+we're writing some graphing program that needs to plot points on a graph.
+
+Doing that really long calculation inside of your `for` loop that's counting from 0 to 10 would get really messy.
+
+```python
+  for i in range(10):
+    <really>
+    <long>
+    <calculation>
+    <using>
+    <i>
+    <that>
+    <makes>
+    <the>
+    <code>
+    <hard>
+    <to>
+    <read>
+    print(<result of that calculation>)
+```
+
+Again, like we touched on before, we want the nature of this code to be more easily determined at a glance, and having
+this huge chunk of code inside of our loop obscures what we're doing.
+
+However, if we just chuck the code into a function as-is, we're going to run into a problem:
+
+```python
+  def do_calculation():
+    <really>
+    <long>
+    <calculation>
+    <using>
+    <i>
+    <that>
+    <makes>
+    <the>
+    <code>
+    <hard>
+    <to>
+    <read>
+    return <result of that calculation>
+
+  for i in range(10):
+    print(do_calculation())
+```
+
+The loop that defines the variable `i` is outside of the function that needs to use it, so the function isn't able to
+access `i`, and in fact, doesn't even know it exists, because the location where `i` is defined is in a portion of code
+not encapsulated by the function.
+
+_(Hi! Quick bit of nuance here: what I've written above will actually work due to some quirks of Python, however,
+similar code written in other languages will almost certainly_ not _work, so for the sake of learning, let's assume that
+this code doesn't work.)_
+
+So, how can we get this calculation function to work?
+
+We can use _function parameters_, also sometimes referred to as _function arguments_.
+
+Parameters are a way of supplying data to a function that the function can use to do its job. We can create a parameter
+for a function by simply writing a variable name in the parenthesis of the function declaration, like so:
+
+```python
+  def do_calculation(x):
+    <really>
+    <long>
+    <calculation>
+    <using>
+    <x>
+    <that>
+    <makes>
+    <the>
+    <code>
+    <hard>
+    <to>
+    <read>
+    return <result of that calculation>
+
+  for i in range(10):
+    print(do_calculation(i))
+```
+
+Now, when we call `do_calculation` in our loop, we can call it with the variable `i` as a parameter. Python will then
+jump over to the `do_calculation` function, take the value contained in `i`, and assign it to the variable `x` that we
+defined as a parameter to this function. `do_calculation` can then use the variable `x` for its calculations. The
+function can then do its thing, and return a value that the print function then prints to the screen.
+
+Note that the name of the parameter _does not have to match_ the name of the variable that we will later supply to the
+function -- the function is defining its own set of variables that it will use to store function input, and when we call
+it, we are simply telling the program the values that we want those variables to take on; the value just so happens to
+be contained in a variable that we already have defined.
+
+You're probably already familiar with some functions that take input -- `print()` and `range()` are both functions that
+take some data as input, and do something with that input, like print out whatever you supplied to the screen, or return
+a list containing numbers up to the number you supplied.
+
+As you might expect, we're not restricted to not call functions within functions. In fact, our calculation function might
+need to call a variety of different math-related functions in order to perform its calculations, which themselves might
+call other functions that help them perform their tasks, etc.
