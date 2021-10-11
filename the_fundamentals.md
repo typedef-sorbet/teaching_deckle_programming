@@ -797,3 +797,100 @@ a list containing numbers up to the number you supplied.
 As you might expect, we're not restricted to not call functions within functions. In fact, our calculation function might
 need to call a variety of different math-related functions in order to perform its calculations, which themselves might
 call other functions that help them perform their tasks, etc.
+
+
+## Higher Level Stuff
+
+### _Data Structures and Algorithmic Complexity_
+
+It is often useful for us to structure the data that we're working with in such a way that makes it easy to access and
+use in our code -- we saw this before with our guessing game; once we added more than 3 secret numbers, it got
+cumbersome to store each of them individually, so we decided to store them in a certain way that made them easy to work
+with.
+
+This is an idea that will be incredibly useful in solving problems in code, and can be the determining factor between
+writing code that kinda works, and writing something that works quickly and efficiently at scale.
+
+One major consideration when approaching a problem is how you're going to be accessing the data -- what data are you
+looking for? Are you going to be looking at all of it at once, or are you going to be accessing it piecemeal? What parts
+are unique?
+
+Let's say that we're writing a simple banking application, and we're tasked with writing a bit of code that will add to
+a user's balance when they make a deposit. This banking application will have a lot of users that we'll need to keep
+track of.
+
+How should we structure our user data so that it'll be easy for us to access and manage?
+
+We could make each user account a short list of information, such as their name and current balance, and keep track of a
+list of those accounts:
+
+```python
+  bank_accounts = [
+    ["John Doe", 800],
+    ["Stacy Green", 1250],
+    ...
+  ]
+```
+
+Then, whenever we need to update our data when a user makes a withdrawal or deposit, we search through the list for an
+entry containing the same name as the user, and update the amount inside of that entry.
+
+This will work, but the issue is that it _doesn't scale well_.
+
+Say this application is really successful, and we suddenly have to maintain 1000 user accounts. Each time that a user
+makes a deposit or a withdrawal, our code is going to need to search through potentially the entire list in order to
+find the entry for that user.
+
+This issue gets worse the more accounts we add. Each new account that gets added to our database is a new entry that we
+have to flip through when we need to go and update someone's account. The amount of time that our code will spend
+looking through the database scales with the size of the database.
+
+But it doesn't have to be this way.
+
+What if we structured our data differently, so that when we go to look up an account for a certain user, we're able to
+find the right account nearly immediately? That way, we could have ten, a thousand, even a million accounts in our
+database, and our time spent searching for someone's account stays the exact same?
+
+Thankfully, we can do just that. Python provides for us a handy data structure called a _dictionary_ that allows us to
+store data under a certain tag, called a "key" _(dictionaries are basically Python's version of Lua's tables)_. Instead
+of needing to trawl an entire list to find the entry for a certain user, we could instead store each account in a 
+dictionary under the user's name. Then, when we need to access that user's account, we can ask the dictionary to
+retrieve the entry for that user's name, and it'll come back nearly instantly.
+
+```python
+  bank_accounts = {
+    "John Doe": 800,
+    "Stacy Green": 1250,
+    ...
+  }
+```
+
+Now, our code can scale to handle as many users as it can store in memory, and the performance of our application will
+barely suffer for it. Our performance no longer increases/scales with the number of user accounts we need to track.
+
+Let's dip into some theory, and introduce a bit of notation.
+
+Often in computer science, we want to describe how a program or algorithm will perform depending on the size of the data
+the algorithm is concerned with. We describe this performance using something called "Big O" notation, which gives us a
+shorthand to describe how an algorithm's performance scales with the size of its input.
+
+Our earlier example suffered from a shortcoming where the time spent performing a task increased whenever the size of
+the data we were operating on increased. Let's call the size of that data `n`.
+
+That early example, when looking through bank accounts to try and find one that matched the user we were looking for,
+would need to look at _up to_ `n` user accounts before it was able to find one that matched. If `n` increased by some
+small amount, the number of actions we would need to perform (those being checking the name of the account against the
+name of the current user) would increase by this same amount -- the number of operations the algorithm performs, its
+_complexity_, scales _linearly_ with the size of the data; meaning if the data size increases by 5, then there's 5 more
+oeprations that we could potentially need to perform our task.
+
+We say that this algorithm has a time complexity of `O(n)` _(read "Big O of n")_, meaning that the number of operations it performs scales
+linearly with the size of the data.
+
+However, our second example, where we decide to throw a dictionary in the mix, has a different algorithmic complexity.
+As we add more entries to our database, the amount of checks that we need to perform stays the same -- we ask the
+dictionary to fetch the user account under a certain name, and it comes back immediately. The performance of the
+algorithm no longer depends on `n`, it runs in _constant time_; we notate that as `O(1)`, to say that no matter the size
+of the data, the number of operations needed to perform the task stays the same.
+
+
