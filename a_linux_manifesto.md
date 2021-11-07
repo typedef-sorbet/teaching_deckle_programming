@@ -8,8 +8,8 @@ Most of it comes down to
 - being stubborn and not giving up the platform I started writing code on
 
 However, there's a lot of good reasons to run Linux on a development machine. Now, I'm not going to
-sit here and try to tell you that you should be installing Linux on absolutely every machine you use for gaming _(I'll
-let the Linux forums do that for me :) )_, but I will go over what are, in my opinion, are the reasons to run Linux for
+sit here and try to tell you that you should be installing Linux on absolutely every machine you use, including those you use for gaming _(I'll
+let the Linux forums do that for me :) )_, but I will go over what are, in my opinion, the reasons to run Linux for
 writing code.
 
 ### Freedom
