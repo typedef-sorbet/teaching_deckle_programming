@@ -137,7 +137,7 @@ _pipe_ it) into another command.
 We can do this like so:
 
 ```bash
-  Run the python script "myscript.py", and pipe output into the "grep" command, which is looking for the string "WARNING"
+  # Run the python script "myscript.py", and pipe output into the "grep" command, which is looking for the string "WARNING"
   $ python myscript.py | grep "WARNING"
 ```
 
